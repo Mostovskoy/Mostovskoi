@@ -21,7 +21,7 @@ def Miller_Rabbin(n, k=20):
             return False
     return True
 
-#Сложение точек
+
 def ec_add(P, Q, a, N):
     if P == "O":
         return Q
@@ -55,7 +55,7 @@ def ec_add(P, Q, a, N):
     y3 = (lam * (x1 - x3) - y1) % N
     return (x3, y3)
 
-#Умножение точки на число
+
 def ec_mul(k, P, a, N):
     R = "O"
     while k:
@@ -65,7 +65,7 @@ def ec_mul(k, P, a, N):
         k //= 2
     return R
 
-#Базовый ECM
+
 def ecm_wiki(N, B, tries):
     for _ in range(tries):
         x = randint(1, N - 1)
@@ -89,7 +89,7 @@ def ecm_wiki(N, B, tries):
                 return d
     return None
 
-#Рекурсивная факторизация с ECM
+
 def ecm_full_factor(N, B, tries):
     factors = []
 
@@ -115,5 +115,5 @@ start = time.time()
 factors = ecm_full_factor(N, B=300, tries=250)
 end = time.time()
 
-print(f"Простые множители: {factors}")
-print(f"Время: {end - start:.4f} сек")
+print(f"Prime factors: {factors}")
+print(f"Time: {end - start:.4f} сек")
