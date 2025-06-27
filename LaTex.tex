@@ -36,7 +36,7 @@
     \begin{flushright}
         \large
         \textbf{Выполнил:}\\
-        студент \underline{Иванов И.И.}\\[0.5cm]
+        студент \underline{Мостовской Н.В.}\\[0.5cm]
         группы \underline{05-КБ-22-О}\\[0.5cm]
         направление подготовки 10.05.01 <<Компьютерная безопасность>>\\[2cm]
         \textbf{Руководитель практики:}\\
@@ -67,15 +67,19 @@
 \caption{ECM – одна попытка}
 \begin{algorithmic}[1]
 \State Случайно выбираем параметры $x, y, a \in \mathbb{Z}_N$
-\State Строим кривую $E: y^2 = x^3 + ax + b \mod N$
-\State Проверяем, лежит ли $(x, y)$ на кривой
+\State Строим эллиптическую кривую $E$ над $\mathbb{Z}_N$ по формуле 
+\[
+    E: y^2 \equiv x^3 + ax + b \pmod{N}
+\]
+где $b \equiv y^2 - x^3 - a x \pmod{N}$. Кривая используется для вычислений в группе точек, определённых по модулю $N$.
+\State Проверяем, лежит ли точка $(x, y)$ на кривой (т.е. удовлетворяет ли уравнению кривой)
 \State Вычисляем $k = \text{LCM}(2, ..., B)$
 \State Пробуем вычислить $kP$ на кривой
 \If{возникает ошибка деления}
   \State Делитель найден
-\EndIf
 \end{algorithmic}
 \end{algorithm}
+
 
 \section*{Исходный код программы}
 \begin{lstlisting}
@@ -216,5 +220,17 @@ Sage \texttt{factor()} & [487, 263521, 20000000359] & 0.01 \\
 
 \section*{Выводы}
 Алгоритм Ленстры успешно реализован и протестирован. Он корректно находит делители и пригоден для чисел, устойчивых к другим методам. Однако по производительности уступает встроенной функции \texttt{factor()} в SageMath.
+
+\newpage
+
+\section*{Список литературы}
+
+\begin{enumerate}
+    \item Lenstra A.K. "Factoring integers with elliptic curves". *Annals of Mathematics*, 1987.\\
+    \url{https://wstein.org/edu/124/lenstra/lenstra.pdf}
+    \item Википедия. Факторизация с помощью эллиптических кривых.\\
+    \url{https://ru.wikipedia.org/wiki/Факторизация_с_помощью_эллиптических_кривых}
+\end{enumerate}
+
 
 \end{document}
