@@ -1,30 +1,66 @@
-\documentclass[12pt]{article}
-\usepackage[russian]{babel}
+\documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
 \usepackage[T2A]{fontenc}
-\usepackage{amsmath, amssymb}
+\usepackage{amsmath,amssymb,amsthm}
 \usepackage{algorithm}
-\usepackage{algpseudocode}
+\usepackage[noend]{algpseudocode}
 \usepackage{geometry}
-\geometry{margin=2.5cm}
 \usepackage{listings}
 \usepackage{color}
 
-\title{Факторизация чисел с помощью эллиптических кривых (ECM)}
-\author{Мостовской Н.В.}
-\date{26.06.2025}
+\geometry{
+    a4paper,
+    left=30mm,
+    right=15mm,
+    top=20mm,
+    bottom=20mm
+}
+
+\lstset{
+    language=Python,
+    basicstyle=\footnotesize\ttfamily,
+    breaklines=true,
+    showstringspaces=false
+}
 
 \begin{document}
-\maketitle
+
+\begin{titlepage}
+    \centering
+    {\large\textbf{Федеральное государственное автономное образовательное учреждение высшего образования}}\\[0.5cm]
+    {\large\textbf{Балтийский федеральный университет имени Иммануила Канта}}\\[0.5cm]
+    {\large Высшая школа компьютерных наук и искусственного интеллекта}\\[3cm]
+    {\Large\textbf{ОТЧЕТ}}\\[1cm]
+    {\Large по учебной практике (учебно-лабораторной)}\\[2cm]
+    \begin{flushright}
+        \large
+        \textbf{Выполнил:}\\
+        студент \underline{Иванов И.И.}\\[0.5cm]
+        группы \underline{05-КБ-22-О}\\[0.5cm]
+        направление подготовки 10.05.01 <<Компьютерная безопасность>>\\[2cm]
+        \textbf{Руководитель практики:}\\
+        ст. преподаватель \underline{Глинчиков К.Е.}\\[2cm]
+    \end{flushright}
+    \begin{flushright}
+        Работа выполнена: <<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} 2025 г.\\[1cm]
+        Работа защищена с оценкой: \underline{\hspace{6cm}}\\[1cm]
+        <<\underline{\hspace{1cm}}>> \underline{\hspace{3cm}} 2025 г.\\
+    \end{flushright}
+    \vfill
+    {\large Калининград 2025}
+\end{titlepage}
+
+\newpage
 
 \section*{Цель работы}
 Изучить и реализовать алгоритм Ленстры факторизации чисел с помощью эллиптических кривых (ECM). Сравнить производительность с функцией \texttt{factor()} в системе SageMath.
 
 \section*{Описание алгоритма}
-Алгоритм Ленстры использует арифметику на эллиптических кривых над кольцом вычетов по модулю $N$. Идея в том, что при выполнении операций на кривой может возникнуть попытка деления на число, не взаимно простое с $N$. Это число и является нетривиальным делителем.
+Алгоритм Ленстры использует арифметику на эллиптических кривых над кольцом вычетов по модулю $N$. При операциях с точками может возникнуть деление на число, не взаимно простое с $N$ — это и есть делитель. В отличие от других алгоритмов, ECM эффективно работает на числах с малыми простыми делителями.
 
 \section*{Описание машины}
-Работа выполнена в браузерной версии SageMath. Операционная система: Windows 10. ОЗУ: 8 ГБ. Процессор: Intel Core i5.
+Работа выполнена в браузерной версии SageMath. ОС: Windows 10, ОЗУ: 8 ГБ, процессор: Intel Core i5.
 
 \section*{Псевдокод}
 \begin{algorithm}[H]
@@ -42,118 +78,123 @@
 \end{algorithm}
 
 \section*{Исходный код программы}
-
-\begin{lstlisting}[language=Python, basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}
 from random import randint
 import time
 
-def Miller_Rabbin(n, k=20)
+def Miller_Rabbin(n, k=20):
     r = 0
     d = n - 1
-    while d % 2 == 0
-        d = 2
+    while d % 2 == 0:
+        d //= 2
         r += 1
-
-    for _ in range(k)
+    
+    if n in (2, 3):
+        return True
+    
+    for _ in range(k):
         a = randint(2, n - 2)
         x = pow(a, d, n)
-        if x in (1, n - 1)
+        if x in (1, n - 1):
             continue
-        for _ in range(r - 1)
+        for _ in range(r - 1):
             x = pow(x, 2, n)
-            if x == n - 1
+            if x == n - 1:
                 break
-        else
+        else:
             return False
     return True
 
-def ec_add(P, Q, a, N)
-    if P == O
+
+def ec_add(P, Q, a, N):
+    if P == "O":
         return Q
-    if Q == O
+    if Q == "O":
         return P
 
     x1, y1 = P
     x2, y2 = Q
 
-    if x1 == x2 and (y1 + y2) % N == 0
-        return O
+    if x1 == x2 and (y1 + y2) % N == 0:
+        return "O"
 
-    if P != Q
+    if P != Q:
         num = (y2 - y1) % N
         den = (x2 - x1) % N
-    else
-        num = (3  x1  x1 + a) % N
-        den = (2  y1) % N
+    else:
+        num = (3 * x1 * x1 + a) % N
+        den = (2 * y1) % N
 
     g = gcd(den, N)
-    if g != 1 and g != N
+    if g != 1 and g != N:
         raise ZeroDivisionError(g)
 
-    try
+    try:
         inv = pow(den, -1, N)
-    except ValueError
+    except ValueError:
         raise ZeroDivisionError(gcd(den, N))
 
-    lam = (num  inv) % N
-    x3 = (lam  lam - x1 - x2) % N
-    y3 = (lam  (x1 - x3) - y1) % N
+    lam = (num * inv) % N
+    x3 = (lam * lam - x1 - x2) % N
+    y3 = (lam * (x1 - x3) - y1) % N
     return (x3, y3)
 
 
-def ec_mul(k, P, a, N)
-    R = O
-    while k
-        if k % 2 == 1
+def ec_mul(k, P, a, N):
+    R = "O"
+    while k:
+        if k % 2 == 1:
             R = ec_add(R, P, a, N)
         P = ec_add(P, P, a, N)
-        k = 2
+        k //= 2
     return R
 
-def ecm_wiki(N, B, tries)
-    for _ in range(tries)
+
+def ecm_wiki(N, B, tries):
+    for _ in range(tries):
         x = randint(1, N - 1)
         y = randint(1, N - 1)
         a = randint(1, N - 1)
-        b = (y  y - x  x  x - a  x) % N
+        b = (y * y - x * x * x - a * x) % N
 
-        if (y  y - (x  x  x + a  x + b)) % N != 0
+        if (y * y - (x * x * x + a * x + b)) % N != 0:
             continue
 
         P = (x, y)
         k = 1
-        for i in range(2, B + 1)
+        for i in range(2, B + 1):
             k = lcm(k, i)
 
-        try
+        try:
             ec_mul(k, P, a, N)
-        except ZeroDivisionError as e
+        except ZeroDivisionError as e:
             d = e.args[0]
-            if 1  d  N
+            if 1 < d < N:
                 return d
     return None
 
-def ecm_full_factor(N, B, tries)
+
+def ecm_full_factor(N, B, tries):
     factors = []
 
-    def recurse(n)
-        if n == 1
+    def recurse(n):
+        if n == 1:
             return
-        if Miller_Rabbin(n)
+        if Miller_Rabbin(n):
             factors.append(n)
             return
 
         d = ecm_wiki(n, B, tries)
-        if d is None or d == n
+        if d is None or d == n:
             factors.append(n)
             return
         recurse(d)
-        recurse(n  d)
+        recurse(n // d)
 
     recurse(N)
     return sorted(factors)
 
-N = 2560000044800000171
+N = 25600000448000001
 start = time.time()
 factors = ecm_full_factor(N, B=300, tries=250)
 end = time.time()
@@ -163,7 +204,6 @@ print(f"Time: {end - start:.4f} sec")
 \end{lstlisting}
 
 \section*{Результаты сравнения}
-
 \begin{tabular}{|c|c|c|}
 \hline
 Метод & Множители & Время (сек) \\
@@ -175,6 +215,6 @@ Sage \texttt{factor()} & [487, 263521, 20000000359] & 0.01 \\
 \end{tabular}
 
 \section*{Выводы}
-Алгоритм Ленстры успешно реализован и протестирован. Он корректно находит делители и пригоден для чисел, устойчивых к другим методам. Однако по производительности уступает встроенному \texttt{factor()} в SageMath.
+Алгоритм Ленстры успешно реализован и протестирован. Он корректно находит делители и пригоден для чисел, устойчивых к другим методам. Однако по производительности уступает встроенной функции \texttt{factor()} в SageMath.
 
 \end{document}
