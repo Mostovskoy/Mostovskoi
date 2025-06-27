@@ -7,7 +7,10 @@ def Miller_Rabbin(n, k=20):
     while d % 2 == 0:
         d //= 2
         r += 1
-
+    
+    if n in (2, 3):
+        return True
+    
     for _ in range(k):
         a = randint(2, n - 2)
         x = pow(a, d, n)
@@ -110,10 +113,10 @@ def ecm_full_factor(N, B, tries):
     recurse(N)
     return sorted(factors)
 
-N = 2560000044800000171
+N = 25600000448000001
 start = time.time()
 factors = ecm_full_factor(N, B=300, tries=250)
 end = time.time()
 
 print(f"Prime factors: {factors}")
-print(f"Time: {end - start:.4f} сек")
+print(f"Time: {end - start:.4f} sec")
